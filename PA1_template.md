@@ -1,15 +1,6 @@
----
-title: 'Reproducible Research: Peer Assessment 1'
-output:
-  html_document:
-    keep_md: yes
-  pdf_document: default
----
+# Reproducible Research: Peer Assessment 1
 
-```{r setoptions, echo = FALSE}
-library(knitr)
-opts_chunk$set(echo = TRUE)
-```
+
 ## Introduction
 It is now possible to collect a large amount of data about personal movement 
 using activity monitoring devices such as a [Fitbit](www.fitbit.com), [Nike Fuelband](www.nike.com/us/en_us/c/nikeplus-fuelband), or
@@ -36,7 +27,8 @@ course web site:
 If the ZIP file `activity.zip` is not found in the working directory it is 
 downloaded.
 
-```{r checkdownload}
+
+```r
 dataZIP <- "activity.zip"
 if (!(file.exists(dataZIP))) {
     downloadURL <- paste("https://d396qusza40orc.cloudfront.net/",
@@ -65,7 +57,8 @@ corresponding to the original (integer) values. Some examples:
 
 After the transformations the summary of the dataset is shown.
 
-```{r loaddata}
+
+```r
 activity <- read.csv(unz(dataZIP, "activity.csv"))
 # convert date
 activity$date <- as.Date(activity$date, "%Y-%m-%d")
@@ -77,7 +70,28 @@ timeLevels <- apply(cbind(h, m), 2, function(x) sprintf("%02d", x))
 timeLevels <- paste(timeLevels[, 1], timeLevels[, 2], sep = ":")
 activity$interval <- factor(activity$interval, labels = timeLevels)
 str(activity)
+```
+
+```
+## 'data.frame':	17568 obs. of  3 variables:
+##  $ steps   : int  NA NA NA NA NA NA NA NA NA NA ...
+##  $ date    : Date, format: "2012-10-01" "2012-10-01" ...
+##  $ interval: Factor w/ 288 levels "00:00","00:05",..: 1 2 3 4 5 6 7 8 9 10 ...
+```
+
+```r
 summary(activity)
+```
+
+```
+##      steps             date               interval    
+##  Min.   :  0.00   Min.   :2012-10-01   00:00  :   61  
+##  1st Qu.:  0.00   1st Qu.:2012-10-16   00:05  :   61  
+##  Median :  0.00   Median :2012-10-31   00:10  :   61  
+##  Mean   : 37.38   Mean   :2012-10-31   00:15  :   61  
+##  3rd Qu.: 12.00   3rd Qu.:2012-11-15   00:20  :   61  
+##  Max.   :806.00   Max.   :2012-11-30   00:25  :   61  
+##  NA's   :2304                          (Other):17202
 ```
 The summary shows that the `steps` variable has 2,304 missing values. These
 missing values are ignored for now but will be imputed in a later step of the
@@ -94,7 +108,8 @@ observations 288 x 61 = 17,568).
 For each of these days the total number of steps is calculated and 
 shown in the histogram below. 
 
-```{r totalstepsplot}
+
+```r
 totalSteps <- tapply(activity$steps, activity$date, sum, na.rm = TRUE)
 # plot the histogram
 hist(x = totalSteps,
@@ -115,17 +130,31 @@ legend("topright",
        legend = c("mean", "median"))
 ```
 
+![](PA1_template_files/figure-html/totalstepsplot-1.png)
+
 The histogram shows the mean and the median total number of steps visually.
 
 The numerical values are the following:
 
-```{r totalstepstats}
+
+```r
 mean(totalSteps)
+```
+
+```
+## [1] 9354.23
+```
+
+```r
 median(totalSteps)
+```
+
+```
+## [1] 10395
 ```
 Mainly because of the large number of days in the leftmost bin
 [0 steps, 2000 steps] of the plot the mean value is approximately
-`r round(median(totalSteps) - mean(totalSteps))`
+1041
 steps below the median value.
 
 ## What is the average daily activity pattern?
@@ -135,7 +164,8 @@ also shown on the plot. For this the local maxima are found in five hour
 intervals 05:00 &rarr; 07:00, 07:00 &rarr; 10:00, 12:00 &rarr; 14:00, 
 15:00 &rarr; 17:00 and 18:00 &rarr; 22:00
 
-```{r activitypattern}
+
+```r
 activityPattern <- tapply(activity$steps, activity$interval, mean, na.rm = TRUE)
 plot(x = strptime(rownames(activityPattern), format="%H:%M"),
      y = activityPattern,
@@ -173,14 +203,21 @@ text(x = as.numeric(strptime(maxX, format="%H:%M")),
      cex = 0.7)
 ```
 
+![](PA1_template_files/figure-html/activitypattern-1.png)
+
 The plot shows that the peaks of the average daily activities are at 
 06:15, 08:35, 12:10, 15:50 and 18:45.
 
 ## Imputing missing values
 While loading the data it has already been mentioned that there 
 are a number of days/intervals where there are missing values (coded as NA).
-```{r missingvalues}
+
+```r
 sum(is.na(activity$steps))
+```
+
+```
+## [1] 2304
 ```
 The presence of missing days may introduce bias into some calculations or
 summaries of the data. 
@@ -191,22 +228,36 @@ day. This however cannot be applied here because for 8 days all 288 values of
 that there are no days for which only some of the `steps` values are NA: either
 a value is present for all 288 observations or for none.
 
-```{r meansteps}
+
+```r
 meanSteps <- tapply(activity$steps, activity$date, mean, na.rm = TRUE)
 meanSteps[is.nan(meanSteps)]
+```
+
+```
+## 2012-10-01 2012-10-08 2012-11-01 2012-11-04 2012-11-09 2012-11-10 
+##        NaN        NaN        NaN        NaN        NaN        NaN 
+## 2012-11-14 2012-11-30 
+##        NaN        NaN
 ```
 
 A better strategy is to use the mean value of the 5-minute intervals 
 (stored in the vector `activityPattern`) since these values are all known.
 
-```{r activitypatternnan}
+
+```r
 sum(is.nan(activityPattern))
+```
+
+```
+## [1] 0
 ```
 
 Therefore all 2304 missing values are replaced by the mean value of the
 5-minute intervals.
 
-```{r impute}
+
+```r
 stepsNA <- is.na(activity$steps)
 intervalSub <- activity$interval[stepsNA]
 activityImpute <- activity
@@ -219,17 +270,50 @@ for which the values are not available i.e. 2012-10-01. The values in the
 `activityImpute` data frame should exactly correspond to the values in the
 `activityPattern` vector.
 
-```{r checkimpute}
+
+```r
 head(activity)          # shows NA values in steps variable
+```
+
+```
+##   steps       date interval
+## 1    NA 2012-10-01    00:00
+## 2    NA 2012-10-01    00:05
+## 3    NA 2012-10-01    00:10
+## 4    NA 2012-10-01    00:15
+## 5    NA 2012-10-01    00:20
+## 6    NA 2012-10-01    00:25
+```
+
+```r
 head(activityImpute)    # should show imputed values
+```
+
+```
+##       steps       date interval
+## 1 1.7169811 2012-10-01    00:00
+## 2 0.3396226 2012-10-01    00:05
+## 3 0.1320755 2012-10-01    00:10
+## 4 0.1509434 2012-10-01    00:15
+## 5 0.0754717 2012-10-01    00:20
+## 6 2.0943396 2012-10-01    00:25
+```
+
+```r
 head(activityPattern)   # should correspond to the previous line
+```
+
+```
+##     00:00     00:05     00:10     00:15     00:20     00:25 
+## 1.7169811 0.3396226 0.1320755 0.1509434 0.0754717 2.0943396
 ```
 
 Next the total number of steps is calculated again for the data frame with
 imputed `steps` values and plotted as a histogram. The original histogram 
 without the imputed values is also plotted as a dashed line.
 
-```{r totalstepsplot2}
+
+```r
 totalSteps2 <- tapply(activityImpute$steps, activityImpute$date, sum)
 # plot the histograms after and before imputing
 h2 <- hist(x = totalSteps2,
@@ -255,6 +339,8 @@ legend("topright",
        lwd = c(4, 1),
        legend = c("mean = median", "no imputing"))
 ```
+
+![](PA1_template_files/figure-html/totalstepsplot2-1.png)
 When comparing the two histograms (after and before imputing) we can conclude
 the following:
 
@@ -269,11 +355,37 @@ been replaced by average values the counts have all moved to the largest
 histogram bin in the center which is also as expected because average values
 were used for the imputing. This is also shown below.
 
-```{r histogramcounts}
+
+```r
 h1$counts
+```
+
+```
+##  [1] 10  2  3  3  7 16 10  7  1  0  2
+```
+
+```r
 h2$counts
+```
+
+```
+##  [1]  2  2  3  3  7 24 10  7  1  0  2
+```
+
+```r
 c(mean(totalSteps), mean(totalSteps2))
+```
+
+```
+## [1]  9354.23 10766.19
+```
+
+```r
 c(median(totalSteps), median(totalSteps2))
+```
+
+```
+## [1] 10395.00 10766.19
 ```
 
 This analysis confirms the statement above that the presence of missing days 
@@ -286,7 +398,8 @@ calculated for weekdays (Monday to Friday) and weekends (Saturday and Sunday).
 To generate the plot functions from the three packages `dplyr`, `ggplot2` 
 and `scales` will be used and are therefore loaded.
 
-```{r loadpackages, message = FALSE}
+
+```r
 library(dplyr)
 library(ggplot2)
 library(scales)
@@ -296,7 +409,8 @@ The plot is created by calculating statistics for weekdays and weekend days
 separately, reformatting some of the resulting variables and generating the
 subplots with the `ggplot2` package.
 
-```{r activitypattern2}
+
+```r
 activityPattern2 <- activityImpute %>% 
     mutate(isWeekend = weekdays(date) %in% c("Saturday", "Sunday")) %>%
     group_by(interval, isWeekend) %>%
@@ -319,6 +433,8 @@ g + facet_wrap(~isWeekend, nrow = 2, ncol = 1) + geom_line(color = "dodgerblue4"
     scale_x_datetime(labels = date_format("%H:00")) +
     labs(title = "Personal activity monitoring: daily activity pattern")
 ```
+
+![](PA1_template_files/figure-html/activitypattern2-1.png)
 
 The plot shows that there are differences in activity patterns during the week
 and in the weekends. While the week pattern shows a large spike in the morning
