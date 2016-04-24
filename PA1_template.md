@@ -206,7 +206,17 @@ text(x = as.numeric(strptime(maxX, format="%H:%M")),
 ![](PA1_template_files/figure-html/activitypattern-1.png)
 
 The plot shows that the peaks of the average daily activities are at 
-06:15, 08:35, 12:10, 15:50 and 18:45.
+06:15, 08:35, 12:10, 15:50 and 18:45. The 5-minute interval at 8:35 contains the
+maximum number of steps.
+
+
+```r
+maxX[which.max(maxY)]
+```
+
+```
+## [1] "08:35"
+```
 
 ## Imputing missing values
 While loading the data it has already been mentioned that there 
