@@ -137,9 +137,9 @@ if (!(file.exists(dataZIP))) {
 </ul>
 <p>The dataset is loaded into R. Because the resulting <code>date</code> is formatted as a Factor it is converted to a date. The <code>interval</code> variable is converted to a factor with values equal to the time of the day corresponding to the original (integer) values. Some examples:</p>
 <ul>
-<li>“0” → “00:00:00”</li>
-<li>“435” → “04:30:00”</li>
-<li>“2055” → “20:55:00”</li>
+<li>“0” → “00:00”</li>
+<li>“435” → “04:30”</li>
+<li>“2055” → “20:55”</li>
 </ul>
 <p>After the transformations the summary of the dataset is shown.</p>
 <pre class="r"><code>activity &lt;- read.csv(unz(dataZIP, &quot;activity.csv&quot;))

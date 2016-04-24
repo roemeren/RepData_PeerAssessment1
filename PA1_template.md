@@ -51,9 +51,9 @@ a Factor it is converted to a date. The `interval` variable is
 converted to a factor with values equal to the time of the day 
 corresponding to the original (integer) values. Some examples:
 
-- "0" &rarr; "00:00:00"
-- "435" &rarr; "04:30:00"
-- "2055" &rarr; "20:55:00"
+- "0" &rarr; "00:00"
+- "435" &rarr; "04:30"
+- "2055" &rarr; "20:55"
 
 After the transformations the summary of the dataset is shown.
 
