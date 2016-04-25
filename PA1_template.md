@@ -51,9 +51,9 @@ a Factor it is converted to a date. The `interval` variable is
 converted to a factor with values equal to the time of the day 
 corresponding to the original (integer) values. Some examples:
 
-- "0" &rarr; "00:00"
-- "435" &rarr; "04:30"
-- "2055" &rarr; "20:55"
+- 0 &rarr; "00:00"
+- 430 &rarr; "04:30"
+- 2055 &rarr; "20:55"
 
 After the transformations the summary of the dataset is shown.
 
@@ -447,6 +447,6 @@ g + facet_wrap(~isWeekend, nrow = 2, ncol = 1) + geom_line(color = "dodgerblue4"
 ![](PA1_template_files/figure-html/activitypattern2-1.png)
 
 The plot shows that there are differences in activity patterns during the week
-and in the weekends. While the week pattern shows a large spike in the morning
+and in the weekends. While the weekday pattern shows a large spike in the morning
 (around 8:30) this is less the case for the weekend which has more frequent but
 less strong activity peaks.
