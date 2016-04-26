@@ -84,7 +84,7 @@ missing values are ignored for now but will be imputed in a later step of the
 analysis.
 
 ## What is mean total number of steps taken per day?
-In this step the mean and median of the total number of steps per day is
+In this step the mean and median of the total number of steps per day are 
 calculated.
 
 The dataset contains 288 observations per day for a period of 61 days between
@@ -192,7 +192,7 @@ summaries of the data.
 
 The missing values could for example be replaced by the mean or median of that
 day. This however cannot be applied here because for 8 days all 288 values of
-`steps` are equal to 0 and therefore no mean or median can be calculated. Note
+`steps` are equal to NA and therefore no mean or median can be calculated. Note
 that there are no days for which only some of the `steps` values are NA: either
 a value is present for all 288 observations or for none.
 
@@ -208,7 +208,7 @@ A better strategy is to use the mean value of the 5-minute intervals
 sum(is.nan(activityPattern))
 ```
 
-Therefore all 2304 missing values are replaced by the mean value of the
+Therefore all 2,304 missing values are replaced by the mean value of the
 5-minute intervals.
 
 ```{r impute}
@@ -260,15 +260,16 @@ legend("topright",
        lwd = c(4, 1),
        legend = c("mean = median", "no imputing"))
 ```
+
 When comparing the two histograms (after and before imputing) we can conclude
 the following:
 
 1. after imputing the calculated mean is exactly equal to the median because of
-the abscence of the high frequency in the leftmost histogram bin. The
+the absence of the high frequency in the leftmost histogram bin. The
 new distribution of the total step counts is very symmetrical.
 2. 8 days seem to have moved from the leftmost histogram bin [0, 2000] to the
 sixth bin ]10000, 12000] which is not surprising since these days correspond to
-the days for which all 288 `steps` values are equal to 0 in the non-imputed
+the days for which all 288 `steps` values are equal to NA in the non-imputed
 data frame, resulting in a total step count of 0. Now that these values have
 been replaced by average values the counts have all moved to the largest
 histogram bin in the center which is also as expected because average values
@@ -326,6 +327,6 @@ g + facet_wrap(~isWeekend, nrow = 2, ncol = 1) + geom_line(color = "dodgerblue4"
 ```
 
 The plot shows that there are differences in activity patterns during the week
-and in the weekends. While the weekday pattern shows a large spike in the morning
+and in the weekends. While the weekday pattern shows a large peak in the morning
 (around 8:30) this is less the case for the weekend which has more frequent but
 less strong activity peaks.
